@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
             menuToggle.setAttribute('aria-expanded', !isExpanded);
             mainNavUl.classList.toggle('active');
 
-            // Change icon based on state
             const icon = menuToggle.querySelector('i');
             if (mainNavUl.classList.contains('active')) {
                 icon.classList.remove('fa-bars');
@@ -22,22 +21,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Smooth scroll for anchor links & close mobile menu on click
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
-            // Check if it's a nav link inside the mobile menu
             if (mainNavUl && mainNavUl.classList.contains('active') && this.closest('.main-nav')) {
                 mainNavUl.classList.remove('active');
-                menuToggle.setAttribute('aria-expanded', 'false');
-                const icon = menuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-                menuToggle.setAttribute('aria-label', 'Abrir menu');
+                if (menuToggle) { // Ensure menuToggle exists
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                    const icon = menuToggle.querySelector('i');
+                    if (icon) { // Ensure icon exists
+                        icon.classList.remove('fa-times');
+                        icon.classList.add('fa-bars');
+                    }
+                    menuToggle.setAttribute('aria-label', 'Abrir menu');
+                }
             }
 
-            // Only prevent default and scroll if it's an actual page anchor
             const targetId = this.getAttribute('href');
-            if (targetId.length > 1 && document.querySelector(targetId)) {
+            // Check if it's an actual page anchor and not just "#"
+            if (targetId.length > 1 && targetId.startsWith('#') && document.querySelector(targetId)) {
                 e.preventDefault();
                 document.querySelector(targetId).scrollIntoView({
                     behavior: 'smooth'
@@ -46,24 +47,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // (Opcional) Basic form validation feedback - more robust validation should be server-side
-    const contactForm = document.querySelector('.contact-form form');
+    const contactForm = document.querySelector('#contato form');
     if (contactForm) {
         contactForm.addEventListener('submit', function(e) {
-            // Example: Check if name is filled (you'd add more checks)
-            const nameInput = contactForm.querySelector('#nome');
-            if (nameInput && nameInput.value.trim() === '') {
-                // You could add visual feedback here, like adding a class to the input
-                // For now, just a console log and preventing submission for demo
-                console.log('Nome é obrigatório.');
-                // alert('Por favor, preencha seu nome.'); // Simple alert
-                // e.preventDefault(); // Uncomment to prevent submission if validation fails
+            let isValid = true;
+            const inputsToValidate = [
+                { id: 'nome', msg: 'O campo Nome Completo é obrigatório.' },
+                { id: 'email', msg: 'O campo E-mail é obrigatório.', type: 'email' },
+                { id: 'telefone', msg: 'O campo Telefone é obrigatório.' },
+                { id: 'mensagem', msg: 'O campo Mensagem é obrigatório.' }
+            ];
+
+            inputsToValidate.forEach(field => {
+                const inputElement = contactForm.querySelector(`#${field.id}`);
+                if (inputElement) {
+                    const parentNode = inputElement.parentNode; // Should be .form-group
+                    let errorMsgElement = parentNode.querySelector(`.error-message[data-for="${field.id}"]`);
+
+                    inputElement.classList.remove('input-error');
+                    if (errorMsgElement) {
+                        errorMsgElement.remove();
+                    }
+
+                    let currentFieldValid = true;
+                    const trimmedValue = inputElement.value.trim();
+
+                    if (trimmedValue === '') {
+                        currentFieldValid = false;
+                    } else if (field.type === 'email') {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        if (!emailRegex.test(trimmedValue)) {
+                            field.msg = 'Por favor, insira um e-mail válido.';
+                            currentFieldValid = false;
+                        }
+                    }
+                    // Add more specific validations if needed (e.g., phone number format)
+
+                    if (!currentFieldValid) {
+                        isValid = false;
+                        inputElement.classList.add('input-error');
+                        errorMsgElement = document.createElement('p');
+                        errorMsgElement.classList.add('error-message');
+                        errorMsgElement.setAttribute('data-for', field.id);
+                        errorMsgElement.textContent = field.msg;
+                        // Insert after the input field within its form-group
+                        inputElement.insertAdjacentElement('afterend', errorMsgElement);
+                    }
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                console.log('Formulário com erros de validação. Não enviado.');
+            } else {
+                console.log('Formulário validado pelo cliente. Prosseguindo com o envio...');
+                // FormSubmit.co will handle the actual submission if action is correctly configured.
             }
-            // IMPORTANT: Remember to configure your form's 'action' attribute
-            // to point to a backend script or service that processes the form data.
-            // Example: action="https://formspree.io/f/YOUR_FORM_ID"
-            console.log('Formulário enviado (simulação). Configure o backend!');
         });
     }
-
 });
