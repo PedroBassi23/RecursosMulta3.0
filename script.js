@@ -25,10 +25,10 @@ document.addEventListener('DOMContentLoaded', function() {
         anchor.addEventListener('click', function (e) {
             if (mainNavUl && mainNavUl.classList.contains('active') && this.closest('.main-nav')) {
                 mainNavUl.classList.remove('active');
-                if (menuToggle) { // Ensure menuToggle exists
+                if (menuToggle) {
                     menuToggle.setAttribute('aria-expanded', 'false');
                     const icon = menuToggle.querySelector('i');
-                    if (icon) { // Ensure icon exists
+                    if (icon) {
                         icon.classList.remove('fa-times');
                         icon.classList.add('fa-bars');
                     }
@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             const targetId = this.getAttribute('href');
-            // Check if it's an actual page anchor and not just "#"
             if (targetId.length > 1 && targetId.startsWith('#') && document.querySelector(targetId)) {
                 e.preventDefault();
                 document.querySelector(targetId).scrollIntoView({
@@ -61,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
             inputsToValidate.forEach(field => {
                 const inputElement = contactForm.querySelector(`#${field.id}`);
                 if (inputElement) {
-                    const parentNode = inputElement.parentNode; // Should be .form-group
+                    const parentNode = inputElement.parentNode;
                     let errorMsgElement = parentNode.querySelector(`.error-message[data-for="${field.id}"]`);
 
                     inputElement.classList.remove('input-error');
@@ -81,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             currentFieldValid = false;
                         }
                     }
-                    // Add more specific validations if needed (e.g., phone number format)
 
                     if (!currentFieldValid) {
                         isValid = false;
@@ -90,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         errorMsgElement.classList.add('error-message');
                         errorMsgElement.setAttribute('data-for', field.id);
                         errorMsgElement.textContent = field.msg;
-                        // Insert after the input field within its form-group
                         inputElement.insertAdjacentElement('afterend', errorMsgElement);
                     }
                 }
@@ -101,7 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Formulário com erros de validação. Não enviado.');
             } else {
                 console.log('Formulário validado pelo cliente. Prosseguindo com o envio...');
-                // FormSubmit.co will handle the actual submission if action is correctly configured.
             }
         });
     }
