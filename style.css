@@ -685,6 +685,32 @@ footer hr {
      margin-right: 0;
 }
 
+/* Estilos para a página de obrigado (Thank You Page) */
+.thank-you-container {
+    text-align: center;
+    padding: 80px 20px;
+    min-height: 70vh; /* Adjust as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.thank-you-container h1 {
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    font-size: 2.5rem; /* Example size */
+}
+.thank-you-container p {
+    font-size: 1.2rem;
+    margin-bottom: 20px; /* Adjusted margin */
+    max-width: 600px;
+    line-height: 1.7;
+}
+.thank-you-container .btn {
+    margin-top: 20px;
+}
+
+
 /* Responsividade */
 @media (max-width: 992px) {
     .about-us-container {
